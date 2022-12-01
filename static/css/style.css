@@ -1,0 +1,13 @@
+.head {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 700;
+    font-size: 2em;
+  }
+  
+  .monospace {
+    font-family: 'Fira Mono', monospace;
+  }
+  
+  body {
+    font-family: 'Fira Sans', sans-serif;
+  }

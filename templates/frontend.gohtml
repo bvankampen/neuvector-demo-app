@@ -1,0 +1,38 @@
+{{ define "content" }}
+<p class="head">Neuvector Test Application</p>
+
+<form action="{{ .Backend }}" method="post">
+<div class="mb-3">
+  <label for="text" class="form-label">Text:</label>
+  <textarea class="form-control" id="text" name="text" rows="3"></textarea>
+</div>
+<button type="submit" class="btn btn-primary">Post</button>
+<button type="button" class="btn btn-info" id="btn_ssn">Fake SSN</button>
+<button type="button" class="btn btn-info" id="btn_cc">Fake CreditCard</button>
+<button type="button" class="btn btn-info" id="btn_random">Random String</button>
+</form>
+{{ end }}
+
+{{ define "javascript" }}
+<script lang="javascript">
+
+function random_string(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+$("#btn_ssn").click(function() {
+  $("#text").val("685-14-7195");
+});
+$("#btn_cc").click(function() {
+  $("#text").val("VISA, 4716851810122187, 9/2028, 931");
+});
+$("#btn_random").click(function() {
+  $("#text").val(random_string(32));
+});
+</script>
+{{ end }}

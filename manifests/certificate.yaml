@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-tls
+  namespace: ${APP_NAMESPACE}
+spec:
+  dnsNames:
+    - "*.${APP_DOMAIN_NAME}"
+  secretName: wildcard-tls
+  issuerRef:
+    name: ${APP_CERT_ISSUER}
+    kind: ClusterIssuer

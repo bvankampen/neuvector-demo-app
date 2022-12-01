@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: ${APP_NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: "v1.0"
+    spec:
+      containers:
+      - name: frontend
+        image: ${APP_IMAGE}
+        envFrom:
+          - configMapRef:
+              name: config
+        ports:
+          - containerPort: 8000
+        command: ["/webapp/frontend"]
+        workingDir: "/webapp"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: ${APP_NAMESPACE}
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: "v1.0"
+    spec:
+      containers:
+      - name: backend
+        image: ${APP_IMAGE}
+        envFrom:
+          - configMapRef:
+              name: config
+        ports:
+          - containerPort: 8000
+        command: ["/webapp/backend"]
+        workingDir: "/webapp"
