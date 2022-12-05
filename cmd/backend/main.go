@@ -1,40 +1,54 @@
 package main
 
 import (
-	"html/template"
+	"encoding/json"
+	"fmt"
+	"math/rand"
 	"net/http"
 	"os"
 )
 
-type Data struct {
-	Text string
+type Response struct {
+	Text string `json:"text"`
+}
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func RandStringBytes(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
 }
 
 func indexHandler(w http.ResponseWriter, req *http.Request) {
 
-	tmpl, err := template.ParseFiles(
-		"templates/backend.gohtml",
-		"templates/base.gohtml",
-	)
+	action := req.URL.Query().Get("action")
+	r := Response{}
 
-	req.ParseForm()
-	data := Data{
-		Text: req.Form.Get("text"),
+	fmt.Printf("Action: %s\n", action)
+
+	switch action {
+	case "ssn":
+		r.Text = "685-14-7195"
+	case "cc":
+		r.Text = "VISA, 4716851810122187, 9/2028, 931"
+	case "text":
+		r.Text = RandStringBytes(32)
+	default:
+		r.Text = ""
 	}
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	jsonResponse, _ := json.Marshal(r)
 
-	if err := tmpl.ExecuteTemplate(w, "base", data); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	fmt.Printf("Response: %s\n", string(jsonResponse))
+
+	fmt.Fprintf(w, string(jsonResponse))
 
 }
 
 func main() {
-	static := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static", static))
-	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/backend", indexHandler)
 	http.ListenAndServe(os.Getenv("APP_BACKEND_IP")+":"+os.Getenv("APP_BACKEND_PORT"), nil)
 }

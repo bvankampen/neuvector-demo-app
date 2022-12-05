@@ -17,19 +17,8 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
-  - host: backend.${APP_DOMAIN_NAME}
-    http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: backend-service
-                port:
-                  number: 80
   tls:
   - hosts:
       - frontend.${APP_DOMAIN_NAME}
-      - backend.${APP_DOMAIN_NAME}
     secretName:
       wildcard-tls

@@ -9,3 +9,4 @@ WORKDIR /code
 RUN go build -o /webapp/frontend /code/cmd/frontend/main.go
 RUN go build -o /webapp/backend /code/cmd/backend/main.go
 RUN rm -rf /code
+WORKDIR /webapp

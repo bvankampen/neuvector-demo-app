@@ -8,4 +8,4 @@ data:
   APP_BACKEND_IP: "0.0.0.0"
   APP_FRONTEND_PORT: "8000"
   APP_BACKEND_PORT: "8000"
-  APP_BACKEND_URL: "https://backend.${APP_DOMAIN_NAME}"
+  APP_BACKEND_URL: "http://backend-service"
