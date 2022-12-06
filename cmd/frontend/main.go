@@ -2,9 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
+	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Data struct {
@@ -25,19 +28,35 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 	action := req.URL.Query().Get("action")
 	data := new(Data)
 
-	resp, err := http.Get(os.Getenv("APP_BACKEND_URL") + "/backend?action=" + action)
-	defer resp.Body.Close()
+	if action != "" {
 
-	if err != nil {
-		data.Backend = err.Error()
-	} else {
-		if resp.StatusCode == 200 {
-			r := new(Response)
-			json.NewDecoder(resp.Body).Decode(r)
-			data.Backend = r.Text
+		url := strings.Trim(os.Getenv("APP_BACKEND_URL"), " ") + "/backend?action=" + action
+		fmt.Printf("Getting: %s\n", url)
+		resp, err := http.Get(url)
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+				fmt.Println(err)
+			}
+		}(resp.Body)
+
+		if err != nil {
+			data.Backend = err.Error()
 		} else {
-			data.Backend = "Error " + string(resp.StatusCode) + " " + resp.Status
+			if resp.StatusCode == 200 {
+				r := new(Response)
+				err := json.NewDecoder(resp.Body).Decode(r)
+				if err != nil {
+					fmt.Println(err)
+				}
+				data.Backend = r.Text
+			} else {
+				data.Backend = "Error " + string(rune(resp.StatusCode)) + " " + resp.Status
+			}
+
 		}
+
+		fmt.Printf("Result: %s\n", data.Backend)
 
 	}
 
@@ -55,6 +74,11 @@ func main() {
 	static := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static", static))
 	http.HandleFunc("/", indexHandler)
-	http.ListenAndServe(os.Getenv("APP_FRONTEND_IP")+":"+os.Getenv("APP_FRONTEND_PORT"), nil)
+	ip := strings.Trim(os.Getenv("APP_FRONTEND_IP"), " ")
+	port := strings.Trim(os.Getenv("APP_FRONTEND_PORT"), " ")
+	err := http.ListenAndServe(ip+":"+port, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }

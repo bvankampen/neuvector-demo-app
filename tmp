@@ -1,0 +1,10 @@
+APP_FRONTEND_IP=localhost                                                         
+APP_BACKEND_IP=localhost                                                          
+APP_FRONTEND_PORT=8000                                                            
+APP_BACKEND_PORT=8001                                                             
+APP_BACKEND_URL=http://localhost:8001                                             
+                                                                                    
+APP_DOMAIN_NAME=nv-demo.p6lab.net                                                 
+APP_NAMESPACE=neuvector-demo                                                      
+APP_CERT_ISSUER=letsencrypt-cloudflare-issuer                                     
+APP_IMAGE=harbor.lan.ping6.nl/library/neuvector-demo/webapp:latest                

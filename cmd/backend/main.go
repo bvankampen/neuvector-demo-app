@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Response struct {
@@ -27,6 +28,7 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 	action := req.URL.Query().Get("action")
 	r := Response{}
 
+	fmt.Printf("Request from: %s\n", req.RemoteAddr)
 	fmt.Printf("Action: %s\n", action)
 
 	switch action {
@@ -50,5 +52,8 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	http.HandleFunc("/backend", indexHandler)
-	http.ListenAndServe(os.Getenv("APP_BACKEND_IP")+":"+os.Getenv("APP_BACKEND_PORT"), nil)
+	err := http.ListenAndServe(strings.Trim(os.Getenv("APP_BACKEND_IP"), " ")+":"+strings.Trim(os.Getenv("APP_BACKEND_PORT"), " "), nil)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
