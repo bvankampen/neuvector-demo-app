@@ -1,3 +1,11 @@
+{{ define "error" }}
+    {{ if .Error }}
+    <div class="alert alert-danger mt-1" role="alert">
+        {{ .Error }}
+    </div>
+    {{ end }}
+{{ end }}
+
 {{ define "content" }}
     <p class="head">Neuvector Test Application</p>
 

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -12,6 +11,7 @@ import (
 
 type Data struct {
 	Backend string
+	Error   string
 }
 
 type Response struct {
@@ -33,16 +33,19 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 		url := strings.Trim(os.Getenv("APP_BACKEND_URL"), " ") + "/backend?action=" + action
 		fmt.Printf("Getting: %s\n", url)
 		resp, err := http.Get(url)
-		defer func(Body io.ReadCloser) {
-			err := Body.Close()
-			if err != nil {
-				fmt.Println(err)
-			}
-		}(resp.Body)
+
+		//defer func(Body io.ReadCloser) {
+		//	err := Body.Close()
+		//	if err != nil {
+		//		fmt.Println(err)
+		//	}
+		//}(resp.Body)
 
 		if err != nil {
-			data.Backend = err.Error()
+			data.Error = err.Error()
+			fmt.Printf("Error: %s", err.Error())
 		} else {
+			defer resp.Body.Close()
 			if resp.StatusCode == 200 {
 				r := new(Response)
 				err := json.NewDecoder(resp.Body).Decode(r)
