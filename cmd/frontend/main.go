@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 type Data struct {
@@ -32,14 +33,8 @@ func indexHandler(w http.ResponseWriter, req *http.Request) {
 
 		url := strings.Trim(os.Getenv("APP_BACKEND_URL"), " ") + "/backend?action=" + action
 		fmt.Printf("Getting: %s\n", url)
-		resp, err := http.Get(url)
-
-		//defer func(Body io.ReadCloser) {
-		//	err := Body.Close()
-		//	if err != nil {
-		//		fmt.Println(err)
-		//	}
-		//}(resp.Body)
+		client := http.Client{Timeout: 2 * time.Second}
+		resp, err := client.Get(url)
 
 		if err != nil {
 			data.Error = err.Error()
